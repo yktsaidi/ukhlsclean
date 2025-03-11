@@ -71,3 +71,9 @@ Some examples of projects making use of the `ukhlsclean` package are:
     Here the package is used to create a clean longitudinal dataset of
     smoking and drinking behaviours, labour market outcomes, and the
     covariates needed to model labour market outcomes.
+
+## Difference with STAPM version
+
+This project was created to add mental health and wellbeing variables not currently included in https://github.com/STAPM/ukhlsclean
+
+
