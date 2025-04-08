@@ -125,12 +125,27 @@ ukhls_clean_health <- function(data = NULL) {
   ##################
   ## RETAIN THE CLEANED VARIABLES
 
+  # ys added to ensure all expected columns are present, even if missing in the current wave
+  expected_cols <- c("pidp", "id", "hidp", "wave_no",
+                     "eq5d_score", "pregnant", "disability", "care_hhold",
+                     "satisfaction_health", "satisfaction_life",
+                     "ghq", "wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")
+
+  missing_cols <- setdiff(expected_cols, names(merged_data))
+  if (length(missing_cols) > 0) {
+    for (col in missing_cols) {
+      merged_data[, (col) := NA]
+    }
+  }
+
   final_data <- merged_data[, c("pidp", "id", "hidp", "wave_no",
                                 "eq5d_score", "pregnant", "disability", "care_hhold",
-                                "satisfaction_health", "satisfaction_life")]
+                                "satisfaction_health", "satisfaction_life",
+                                "ghq","wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")]
 
   var_names <- c("eq5d_score", "pregnant", "disability", "care_hhold",
-                 "satisfaction_health", "satisfaction_life")
+                 "satisfaction_health", "satisfaction_life",
+                 "ghq","wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")
 
   setnames(final_data, var_names, paste0("h_", var_names))
 

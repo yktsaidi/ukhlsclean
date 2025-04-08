@@ -74,6 +74,5 @@ Some examples of projects making use of the `ukhlsclean` package are:
 
 ## Difference with STAPM version
 
-This project was created to add mental health and wellbeing variables not currently included in https://github.com/STAPM/ukhlsclean
-
-
+This project was created to add mental health and well being variables
+not currently included in <https://github.com/STAPM/ukhlsclean>

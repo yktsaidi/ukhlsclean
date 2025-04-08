@@ -78,7 +78,8 @@ ukhls_read_wave14 <- function(
   education_vars   <- Hmisc::Cs(n_hiqual_dv)
   health_vars      <- Hmisc::Cs(n_health, n_aidhh, n_sclfsat1, n_sclfsato, n_sf12pcs_dv, n_sf12mcs_dv,
                                 n_scsf1, n_scsf2a, n_scsf2b, n_scsf3a, n_scsf3b, n_scsf4a, n_scsf4b, n_scsf5, n_scsf6a,
-                                n_scsf6b, n_scsf6c, n_scsf7)
+                                n_scsf6b, n_scsf6c, n_scsf7,
+                                n_scghq1_dv, n_jwbs1_dv, n_jwbs2_dv, n_hl2gp, n_hosp, n_hl2hop)
   preg_vars        <- Hmisc::Cs(n_preg,
                                 n_pregout1, n_pregend1, n_pregsmoke1, n_smkmnth11, n_smkmnth21, n_smkmnth31, n_pregsmk11, n_pregsmk21, n_pregsmk31, n_aedrof1, n_aepuwk1, n_aepuda1, n_lchmulti1,
                                 n_pregout2, n_pregend2, n_pregsmoke2, n_smkmnth12, n_smkmnth22, n_smkmnth32, n_pregsmk12, n_pregsmk22, n_pregsmk32, n_aedrof2, n_aepuwk2, n_aepuda2, n_lchmulti2,
@@ -136,6 +137,7 @@ ukhls_read_wave14 <- function(
                          ## health variables
                          "n_health","n_aidhh","n_sclfsat1","n_sclfsato","n_sf12pcs_dv","n_sf12mcs_dv",
                          "n_scsf1","n_scsf2a","n_scsf2b","n_scsf3a","n_scsf3b","n_scsf4a","n_scsf4b","n_scsf5","n_scsf6a","n_scsf6b","n_scsf6c","n_scsf7",
+                         "n_scghq1_dv", "n_jwbs1_dv", "n_jwbs2_dv", "n_hl2gp", "n_hosp", "n_hl2hop",
                          ## pregnancy variables
                          "n_preg",
                          "n_pregout1","n_pregend1","n_pregsmoke1","n_smkmnth11","n_smkmnth21","n_smkmnth31","n_pregsmk11","n_pregsmk21","n_pregsmk31","n_aedrof1","n_aepuwk1","n_aepuda1","n_lchmulti1",
@@ -189,6 +191,7 @@ ukhls_read_wave14 <- function(
                          ## health variables
                          "lt_sick","caring","health_satisf","life_satisf","sf12_pcs","sf12_mcs",
                          "sf1","sf2a","sf2b","sf3a","sf3b","sf4a","sf4b","sf5","sf6a","sf6b","sf6c","sf7",
+                         "ghq","job_anx","job_dep","gp", "inpatient", "outpatient",
                          ## pregnancy variables
                          "preg",
                          "pregout1","pregend1","pregsmoke1","smkmnth11","smkmnth21","smkmnth31","pregsmk_ncigs11","pregsmk_ncigs21","pregsmk_ncigs31","pregdrnk_freq1","pregdrnk_unitpw1","pregdrnk_unit1","lchmulti1",
