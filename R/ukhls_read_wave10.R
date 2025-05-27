@@ -79,7 +79,7 @@ ukhls_read_wave10 <- function(
   education_vars   <- Hmisc::Cs(j_hiqual_dv)
   health_vars      <- Hmisc::Cs(j_health, j_aidhh, j_sclfsat1, j_sclfsato, j_sf12pcs_dv, j_sf12mcs_dv,
                                 j_scsf1, j_scsf2a, j_scsf2b, j_scsf3a, j_scsf3b, j_scsf4a, j_scsf4b, j_scsf5, j_scsf6a, j_scsf6b, j_scsf6c, j_scsf7,
-                                j_scghq1_dv, j_swemwbs_dv, j_jwbs1_dv, j_jwbs2_dv, j_hl2gp, j_hosp, j_hl2hop)
+                                j_scghq1_dv, j_scghq2_dv, j_swemwbs_dv, j_jwbs1_dv, j_jwbs2_dv, j_hl2gp, j_hosp, j_hl2hop)
   preg_vars        <- Hmisc::Cs(j_preg,
                                 j_pregout1, j_pregend1, j_pregsmoke1, j_smkmnth11, j_smkmnth21, j_smkmnth31, j_pregsmk11, j_pregsmk21, j_pregsmk31, j_aedrof1, j_aepuwk1, j_aepuda1, j_lchmulti1,
                                 j_pregout2, j_pregend2, j_pregsmoke2, j_smkmnth12, j_smkmnth22, j_smkmnth32, j_pregsmk12, j_pregsmk22, j_pregsmk32, j_aedrof2, j_aepuwk2, j_aepuda2, j_lchmulti2,
@@ -139,7 +139,7 @@ ukhls_read_wave10 <- function(
                          ## health variables
                          "j_health","j_aidhh","j_sclfsat1","j_sclfsato","j_sf12pcs_dv","j_sf12mcs_dv",
                          "j_scsf1","j_scsf2a","j_scsf2b","j_scsf3a","j_scsf3b","j_scsf4a","j_scsf4b","j_scsf5","j_scsf6a","j_scsf6b","j_scsf6c","j_scsf7",
-                         "j_scghq1_dv", "j_swemwbs_dv", "j_jwbs1_dv", "j_jwbs2_dv", "j_hl2gp", "j_hosp", "j_hl2hop",
+                         "j_scghq1_dv", "j_scghq2_dv", "j_swemwbs_dv", "j_jwbs1_dv", "j_jwbs2_dv", "j_hl2gp", "j_hosp", "j_hl2hop",
                          ## pregnancy variables
                          "j_pregout1","j_pregout2","j_pregout3",
                          ## smoke variables
@@ -190,7 +190,7 @@ ukhls_read_wave10 <- function(
                          ## health variables
                          "lt_sick","caring","health_satisf","life_satisf","sf12_pcs","sf12_mcs",
                          "sf1","sf2a","sf2b","sf3a","sf3b","sf4a","sf4b","sf5","sf6a","sf6b","sf6c","sf7",
-                         "ghq","wemwbs","job_anx","job_dep", "gp", "inpatient", "outpatient",
+                         "ghq_36", "ghq_12","wemwbs","job_anx","job_dep", "gp", "inpatient", "outpatient",
                          ## pregnancy variables
                          "pregout1","pregout2","pregout3",
                          ## smoke variables

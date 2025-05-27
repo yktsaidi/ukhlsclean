@@ -1,0 +1,154 @@
+---
+title: "Initial Understanding Society Regressions"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This document explores the data produced from an amended version of `ukhlsclean` which includes more MH and wellbeing variables. 
+
+These data are used the `pglm` package which estimates panel models for glm-like models,
+to explore the relationships between mental health and smoking status.
+
+
+## load the data
+```{r , warning = FALSE , message = FALSE}
+library(ggplot2)
+library(data.table)
+library(tidyverse)
+library(broom)
+library(gtsummary)
+library(pglm)
+
+#load the data set 
+load("../../ukhlsclean_data/ukhlsclean_data.RData")
+```
+## The data
+
+In additon to smoking, want to include the follwing 
+
+* GHQ-12 >=4: h_ghq_12 >= 4
+* Age: d_age_5cat (age split in 5 categories)
+* Sex: d_sex
+* IMD quintile: d_imd_quintile
+* Housing: hh_hometenure
+
+```{r , warning = FALSE , message = FALSE}
+# make new version of data which includes the variables we ned at time t
+log_reg_data <- data |>
+  mutate(
+    ghq_4plus = (h_ghq_12 >= 4)*1, #make ghq >=4 variable
+    smoker_tplus1 = 1*(s_current_smoker=="smoker")
+  ) |> #now make lagged version of variables as using t to predict quiting at t+1
+  group_by(pidp) %>%
+  arrange(wave_no) %>%
+  mutate(smoker_t = as.factor(lag(s_current_smoker, n = 1, default = NA)),
+         ghq_4plus_t = as.factor(lag(ghq_4plus, n = 1, default = NA)),
+         age_5cat_t = as.factor(lag(d_age_5cat, n = 1, default = NA)),
+         sex_t = as.factor(lag(d_sex, n = 1, default = NA)),
+         imd_quintile_t = as.factor(lag(d_imd_quintile, n = 1, default = NA)),
+         hometenure_t = as.factor(lag(hh_hometenure, n = 1, default = NA))) %>%
+  ungroup() |>
+  # now remove rows with missing values for our selected variables 
+  drop_na(smoker_tplus1,
+          ghq_4plus_t,
+          age_5cat_t,
+          sex_t,
+          imd_quintile_t,
+          hometenure_t,
+          smoker_t) |>
+  arrange(pidp, wave_no) # make sure data is sorted by person then wave
+
+```
+
+## Trying the differnt pglm models
+
+there are three model options in the package:
+
+* pooling: this jsut fits a glm (liek we did before), doesn't treat individuals as connected over time 
+* within: controls for time-invariant unobserved individual characteristics i.e. the individual differences captured by the "pidp" variable are controlled for
+* between: 
+* random: 
+
+### pooling
+First try the "pooling" model which is the same as the glm we used previously
+
+```{r , warning = FALSE , message = FALSE}
+# now for the regression - with data filtered to smokers only
+p_model_smoker <- 
+  pglm(smoker_tplus1 ~ 
+         ghq_4plus_t +
+         age_5cat_t +
+         sex_t +
+         imd_quintile_t +
+         hometenure_t,
+       data = filter(log_reg_data,smoker_t=="smoker"),
+       family = binomial(link = "logit"), # Specify binomial family with logit link
+       index = c("pidp", "wave_no"),      # Crucial: define individual and time IDs
+       model = "pooling")
+
+#summary(model_smoker)
+# Table for Model 
+tbl_regression(
+  p_model_smoker,
+  #exponentiate = TRUE,  # Show odds ratios instead of log odds
+)
+```
+### within
+First try the "pooling" model which is the same as the glm we used previously
+
+```{r , warning = FALSE , message = FALSE}
+# now for the regression - with data filtered to smokers only
+w_model_smoker <- 
+  pglm(smoker_tplus1 ~ 
+         ghq_4plus_t +
+         age_5cat_t +
+         sex_t +
+         imd_quintile_t +
+         hometenure_t,
+       data = filter(log_reg_data,smoker_t=="smoker"),
+       family = binomial(link = "logit"), # Specify binomial family with logit link
+       index = c("pidp", "wave_no"),      # Crucial: define individual and time IDs
+       model = "within")
+
+#summary(model_smoker)
+# Table for Model 
+tbl_regression(
+  w_model_smoker,
+  #exponentiate = TRUE,  # Show odds ratios instead of log odds
+)
+
+filtered_data <- filter(log_reg_data, smoker_t=="smoker")
+
+variation_check <- filtered_data %>%
+  group_by(pidp) %>%
+  summarise(
+    n_obs = n(),
+    min_outcome = min(smoker_tplus1, na.rm = TRUE),
+    max_outcome = max(smoker_tplus1, na.rm = TRUE)
+  ) %>%
+  mutate(
+    # TRUE if the individual's outcome changes over their waves
+    has_outcome_variation = (min_outcome != max_outcome)
+  )
+
+message("Number of individuals in filtered data: ", n_distinct(filtered_data$pidp))
+message("Number of individuals with outcome variation (contributing to FE): ", sum(variation_check$has_outcome_variation, na.rm = TRUE))
+message("Percentage of individuals with outcome variation: ", round(100 * sum(variation_check$has_outcome_variation, na.rm = TRUE) / n_distinct(filtered_data$pidp), 2), "%")
+
+if (sum(variation_check$has_outcome_variation, na.rm = TRUE) == 0) {
+  warning("No individuals show variation in smoker_tplus1 in the filtered data. Fixed effects model cannot be estimated.")
+}
+```
+
+
+
+
+  

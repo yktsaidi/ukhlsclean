@@ -25,6 +25,13 @@ ukhls_clean_health <- function(data = NULL) {
 
   data[, disability := as.factor(disability)]
 
+  #########################################################
+  ### was inpaatient in last 12 months ###
+
+  data$inpatient <- factor(data$inpatient,
+                                 levels = c(1, 2),
+                                 labels = c("yes", "no"))
+
   ################################
   ### satisfaction with health ###
 
@@ -129,7 +136,7 @@ ukhls_clean_health <- function(data = NULL) {
   expected_cols <- c("pidp", "id", "hidp", "wave_no",
                      "eq5d_score", "pregnant", "disability", "care_hhold",
                      "satisfaction_health", "satisfaction_life",
-                     "ghq", "wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")
+                     "ghq_36", "ghq_12", "wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")
 
   missing_cols <- setdiff(expected_cols, names(merged_data))
   if (length(missing_cols) > 0) {
@@ -141,11 +148,11 @@ ukhls_clean_health <- function(data = NULL) {
   final_data <- merged_data[, c("pidp", "id", "hidp", "wave_no",
                                 "eq5d_score", "pregnant", "disability", "care_hhold",
                                 "satisfaction_health", "satisfaction_life",
-                                "ghq","wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")]
+                                "ghq_36", "ghq_12","wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")]
 
   var_names <- c("eq5d_score", "pregnant", "disability", "care_hhold",
                  "satisfaction_health", "satisfaction_life",
-                 "ghq","wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")
+                 "ghq_36", "ghq_12","wemwbs","job_anx","job_dep","vigdays", "gp", "inpatient", "outpatient")
 
   setnames(final_data, var_names, paste0("h_", var_names))
 

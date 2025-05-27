@@ -1,0 +1,200 @@
+---
+title: "Understanding Society Data Exploration"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Aim and contents
+
+This document explores the data produced from an amended version of ukhlsclean which includes more MH and wellbeing variables. These data are to be used to explore the relationship between smoking and mental health.
+
+First the dataset is created, then the variables we want to include in our initial analyses are visualised/summarised then categorised to be used in follwoing analyses. The choice of variables and their classification are informed by work ryan and damon have done on smoking and work outcomes (`X:\ScHARR\PR_SPECTRUM\Workpackages\WP4 Economics Brennan\02 Work`)
+
+## Create data set
+
+First make the dataset using the amended ukhlsclean package.
+
+```{r }
+library(ggplot2)
+library(data.table)
+library(tidyverse)
+
+root  <- "X:/"
+file  <- "HAR_PR/PR/USoc/Data/SN6614_2024_12_02/tab/ukhls" ## Dec 2024 - has wave 14
+full  <- TRUE # full interviews (no proxies) only
+waves <- 1:14
+ages  <- 16:89
+country <- "UK"
+keep_vars <- NULL
+complete_vars <- c("d_age","d_sex","d_country","l_econ_stat_3cat")
+inflation_index <- "cpih"
+
+##########################
+### Full UKHLS panel data
+
+data <- ukhlsclean(root = root,
+                   file = file,
+                   full = full,
+                   waves = waves,
+                   ages = ages,
+                   country = country,
+                   #keep_vars = keep_vars,
+                   complete_vars = complete_vars,
+                   inflation_index = inflation_index)
+# 
+save(data,file="../../ukhlsclean_data/ukhlsclean_data.RData")
+load("../../ukhlsclean_data/ukhlsclean_data.RData")
+
+```
+
+## Selected variables
+
+Now to see what the data look like for the variables we'd like to initially include.
+
+variable list:
+
+from ryan's project: \* "d_age" \* "d_age2" age squared \* "d_sex", \* "d_imd_quintile" \* "d_gor" \* "d_hiqual" \* "d_ethnicity_9cat" \* "d_marital" \* "hh_size" \* "hh_numchild" \* "hh_hometenure"
+
+Smoking varibales; \* "s_current_smoker" \* "smoking_status" made from the current and ever smoker variables, options are: current, former, never
+
+Health variables: "eq5d_score", "satisfaction_health", "satisfaction_life", \* "h_ghq", "h_wemwbs","h_job_anx","h_job_dep","h_vigdays", "h_gp", "h_inpatient", "h_outpatient"
+
+Employment: "l_econ_stat_7cat", "l_econ_stat_3cat"
+
+```{r}
+
+# make the smoking status variable
+df <- data |>
+  group_by(pidp) |>
+  arrange(wave_no) |>
+  mutate(
+    ever_smoked_flag = case_when(
+      s_ever_smoked == "smoked" ~ 1L,
+      s_current_smoker == "smoker" ~ 1L,
+      TRUE ~ 0L),
+    ever_smoked_flag = cummax(ever_smoked_flag),
+    # Now create the smoking status variable
+    smoking_status = case_when(
+      s_current_smoker == "smoker" ~ "current_smoker",
+      s_current_smoker == "non_smoker" & ever_smoked_flag==0 ~ "never_smoker",
+      s_current_smoker == "non_smoker" & ever_smoked_flag==1 ~ "former_smoker")
+    ) |>
+  ungroup()
+
+# put all the variables in a list
+var_list <- 
+  c(#from ryan
+    "d_age", "d_sex", 
+     "d_imd_quintile", "d_gor", "d_hiqual", "d_ethnicity_9cat",
+     "d_marital", "hh_size", "hh_numchild", "hh_hometenure",
+    #smoking
+    "s_current_smoker",
+    "smoking_status",
+    # health
+    "h_eq5d_score", "h_satisfaction_health", "h_satisfaction_life",
+    "h_ghq", "h_wemwbs","h_job_anx","h_job_dep","h_vigdays", "h_gp", "h_inpatient", "h_outpatient",
+    #employment
+    "l_econ_stat_7cat", "l_econ_stat_3cat"
+    )
+
+# make a function to plot them all
+summarise_by_wave_fcn <- function(data, variable_name, x_var_name = "wave_no", split_by_var = NULL){
+  # plot as box plots if numeric with more than 5 unique values
+  vec <- data[[variable_name]]
+  if (is.numeric(vec) & length(unique(vec)) > 7){
+    
+      missing_stats <- data %>%
+        group_by(!!sym(x_var_name)) %>%
+        summarise(
+          n_obs = sum(!is.na(!!sym(variable_name))), # Number of non-missing observations
+          n_missing = sum(is.na(!!sym(variable_name))),
+          perc_missing = round(mean(is.na(!!sym(variable_name))) * 100, 1),
+          median_ghq_for_pos = median(!!sym(variable_name), na.rm = TRUE), # For text placement
+          .groups = 'drop'
+        ) %>%
+        # Adjust text position (e.g., just below the x-axis or at the top)
+        mutate(label = paste0("N=", n_obs, "\n", perc_missing, "% NA"))
+      
+      p = ggplot(data, aes(x = as.factor(!!sym(x_var_name)), y = !!sym(variable_name))) +
+        geom_boxplot(fill = "skyblue", color = "darkblue") +
+        geom_text(data = missing_stats,
+                aes(x = as.factor(!!sym(x_var_name)), label = label, y = -Inf), # *** Added x = wave here ***
+                vjust = -0.5, size = 2, inherit.aes = FALSE) +
+        theme_minimal() +
+        coord_cartesian(clip = "off") + # Allow text to go outside plot area
+        theme(plot.margin = unit(c(1, 1, 3, 1), "lines")) # Increase bottom margin
+      } else {
+        p = ggplot(data, aes(x=!!sym(x_var_name), fill=as.factor(!!sym(variable_name)))) +
+          geom_bar(position=ifelse(!is.null(split_by_var), "fill", "stack")) 
+      }
+  p = p + 
+    labs(title = paste(variable_name, "distribution across", x_var_name),
+         x = x_var_name,
+         y = variable_name)
+         
+   # Add faceting if split_by_var is provided
+  if (!is.null(split_by_var)) {
+    p <- p + facet_wrap(as.formula(paste0("~ as.factor(", split_by_var, ")")), scales = "free_y") # scales="free_y" useful if value ranges differ
+    # Update title to reflect the split
+    p <- p + ggtitle(paste(p$labels$title, "by", split_by_var))
+  }
+
+  print(p)
+  }
+#
+
+# plot all the variables in the list by wave
+for (variable_names in var_list) {
+  print(variable_names)
+  summarise_by_wave_fcn(df,variable_names)
+}
+
+
+
+```
+
+### By wave and smoking status
+
+see hwo distributions differ for the smoking status groups
+
+```{r }
+# plot all the variables in the list by wave and smoking status
+for (variable_names in var_list) {
+  print(variable_names)
+  summarise_by_wave_fcn(df,variable_names, split_by_var = "smoking_status")
+}
+
+
+```
+
+
+## regressions
+
+In the smoking and work project they pooled the waves together snd kep copmplete cases,
+of we want omake a dynamic BN though will try to use NN to fill missing data
+
+maybe the next step shoudl be to use everything at time t to predict transition in smoking status in time t+1?
+
+They didn't impute any mossing data for thw 
+
+See how many complete cases there are, waves 5-14 just looking at smoking and MH Make a verison of dataset with (from the 7 employment categories maybe make 4 binaries: employed, retired, education?)
+
+```{r}
+
+wide_data = df|>
+  filter(wave_no>=5) |>
+  select(id:pidp, starts_with("d_"),l_econ_stat_7cat,h_ghq, s_current_smoker) |>
+  pivot_wider(
+    id_cols = pidp,
+    names_from = wave_no,
+    values_from = c(l_econ_stat_7cat, h_ghq, s_current_smoker)
+  )
+  
+
+# how many are complete cases?
+sum(complete.cases(wide_data))
+```

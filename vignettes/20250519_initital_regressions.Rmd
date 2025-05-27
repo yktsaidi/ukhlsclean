@@ -1,0 +1,321 @@
+---
+title: "Initial Understanding Society Regressions"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This document explores the data produced from an amended version of ukhlsclean which includes more MH and wellbeing variables. 
+
+These data are used to make initial regressions on the relationships between mental health and smoking status.
+
+
+## load the data
+```{r , warning = FALSE , message = FALSE}
+library(ggplot2)
+library(data.table)
+library(tidyverse)
+library(broom)
+library(gtsummary)
+
+#load the data set 
+load("../../ukhlsclean_data/ukhlsclean_data.RData")
+```
+## trends over waves
+### % current smokers
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+smoker_percentage_by_wave <- data %>%
+  group_by(wave_no) %>%
+  summarise(
+    n_smoker = sum(s_current_smoker == "smoker", na.rm = TRUE),
+    n_non_missing = sum(!is.na(s_current_smoker)), # Count of non-missing values
+    percentage_smoker = (n_smoker / n_non_missing) * 100,
+    .groups = 'drop'
+  )
+
+
+# Create the line plot
+ggplot(smoker_percentage_by_wave, aes(x = as.numeric(wave_no), y = percentage_smoker)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_point(color = "steelblue", size = 2) +
+  #geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% Current Smokers by Wave",
+    x = "Wave Number",
+    y = "% Current Smokers"
+  ) +
+  theme_minimal() + scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = unique(as.numeric(smoker_percentage_by_wave$wave_no))) # Ensure all waves are labeled
+
+```
+
+### % GHQ-12 >=4
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+smoker_percentage_by_wave <- data %>%
+  group_by(wave_no) %>%
+  summarise(
+    n_smoker = sum(h_ghq_12 >= 4, na.rm = TRUE),
+    n_non_missing = sum(!is.na(h_ghq_12)), # Count of non-missing values
+    percentage_smoker = (n_smoker / n_non_missing) * 100,
+    .groups = 'drop'
+  )
+
+
+# Create the line plot
+ggplot(smoker_percentage_by_wave, aes(x = as.numeric(wave_no), y = percentage_smoker)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_point(color = "steelblue", size = 2) +
+#  geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% GHQ-12 >=4 by Wave",
+    x = "Wave Number",
+    y = "% GHQ-12 >=4"
+  ) +
+  theme_minimal() + scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = unique(as.numeric(smoker_percentage_by_wave$wave_no))) # Ensure all waves are labeled
+
+```
+
+
+### % GHQ-12 >=4 by current smoker
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+smoker_percentage_by_wave <- data %>%
+  group_by(wave_no, s_current_smoker) %>%
+  summarise(
+    n_smoker = sum(h_ghq_12 >= 4, na.rm = TRUE),
+    n_non_missing = sum(!is.na(h_ghq_12)), # Count of non-missing values
+    percentage_smoker = (n_smoker / n_non_missing) * 100,
+    .groups = 'drop'
+  )
+
+# Create the line plot
+ggplot(filter(smoker_percentage_by_wave, !is.na(s_current_smoker)), aes(x = as.numeric(wave_no), y = percentage_smoker, color = s_current_smoker, group = s_current_smoker)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  #geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% GHQ-12 >=4 by Wave and Current Smoker",
+    x = "Wave Number",
+    y = "% GHQ-12 >=4"
+  ) +
+  labs(colour = NULL) +
+  theme_minimal() + scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = unique(as.numeric(smoker_percentage_by_wave$wave_no))) # Ensure all waves are labeled
+
+```
+
+### % current smoker for those living in household with children
+
+using Age of youngest child in household: hh_age_yngchl
+
+i.e. of people living in a houseghold wih children (15 or younger), what proportion smoke?
+
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+smoker_percentage_by_wave <- data %>%
+  filter(!is.na(hh_age_yngchl)&hh_age_yngchl!="no_children") %>%
+  group_by(wave_no) %>%
+ summarise(
+    n_smoker = sum(s_current_smoker == "smoker", na.rm = TRUE),
+    n_non_missing = sum(!is.na(s_current_smoker)), # Count of non-missing values
+    percentage_smoker = (n_smoker / n_non_missing) * 100,
+    .groups = 'drop'
+  )
+
+
+# Create the line plot
+ggplot(smoker_percentage_by_wave, aes(x = as.numeric(wave_no), y = percentage_smoker)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_point(color = "steelblue", size = 2) +
+#  geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% Current smoker by wave for those in household with children",
+    x = "Wave number",
+    y = "% Current smoker"
+  ) +
+  labs(colour = NULL) +
+  theme_minimal() + scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = unique(as.numeric(smoker_percentage_by_wave$wave_no))) # Ensure all waves are labeled
+
+```
+
+## logistic regressions
+
+logistic regressions for being a non-smoker at t+1 using:
+
+* GHQ-12 >=4: h_ghq_12 >= 4
+* Age: d_age_5cat (age split in 5 categories)
+* Sex: d_sex
+* IMD quintile: d_imd_quintile
+* Housing: hh_hometenure
+
+```{r , warning = FALSE , message = FALSE}
+# make new version of data which includes the variables we ned at time t
+log_reg_data <- data |>
+  mutate(
+    ghq_4plus = (h_ghq_12 >= 4)*1, #make ghq >=4 variable
+    smoker_tplus1 = 1*(s_current_smoker=="smoker")
+  ) |> #now make lagged version of variables as using t to predict quiting at t+1
+  group_by(pidp) %>%
+  arrange(wave_no) %>%
+  mutate(smoker_t = as.factor(lag(s_current_smoker, n = 1, default = NA)),
+         ghq_4plus_t = as.factor(lag(ghq_4plus, n = 1, default = NA)),
+         age_5cat_t = as.factor(lag(d_age_5cat, n = 1, default = NA)),
+         sex_t = as.factor(lag(d_sex, n = 1, default = NA)),
+         imd_quintile_t = as.factor(lag(d_imd_quintile, n = 1, default = NA)),
+         hometenure_t = as.factor(lag(hh_hometenure, n = 1, default = NA))) %>%
+  ungroup() |>
+  # now remove rows with missing values for our selected variables 
+  drop_na(smoker_tplus1,
+          ghq_4plus_t,
+          age_5cat_t,
+          sex_t,
+          imd_quintile_t,
+          hometenure_t,
+          smoker_t)
+```
+
+### smoker at t+1 given that smoker at t
+
+In this version, only those who were smokers at t are included.
+
+```{r , warning = FALSE , message = FALSE}
+# now for the regression - with data filtered to smokers only
+model_smoker <- glm(smoker_tplus1 ~ 
+                ghq_4plus_t +
+                age_5cat_t +
+                sex_t +
+                imd_quintile_t +
+                hometenure_t,
+              data = filter(log_reg_data,smoker_t=="smoker"), family = "binomial")
+
+#summary(model_smoker)
+# Table for Model 
+tbl_regression(
+  model_smoker,
+  #exponentiate = TRUE,  # Show odds ratios instead of log odds
+)
+```
+
+### smoker at t+1 given that non-smoker at t
+
+In this version, only those who were smokers at t are included.
+
+```{r , warning = FALSE , message = FALSE}
+# now for the regression - with data filtered to non-smokers only
+model_non_smoker <- glm(smoker_tplus1 ~ 
+                ghq_4plus_t +
+                age_5cat_t +
+                sex_t +
+                imd_quintile_t +
+                hometenure_t,
+              data = filter(log_reg_data,smoker_t=="non_smoker"), family = "binomial")
+
+#summary(model_non_smoker)
+tbl_regression(
+  model_non_smoker,
+ # exponentiate = TRUE,  # Show odds ratios instead of log odds
+)
+```
+
+### Summary plot and table
+Make nice summary tables and plots
+```{r , warning = FALSE , message = FALSE}
+# Extract odds ratios and CIs using broom::tidy
+or_1 <- tidy(model_smoker, exponentiate = TRUE, conf.int = TRUE) %>%
+  mutate(model = "Smoker at t")
+
+or_2 <- tidy(model_non_smoker, exponentiate = TRUE, conf.int = TRUE) %>%
+  mutate(model = "Non-smoker at t")
+
+# output these for slide too
+lor_1 <- tidy(model_smoker, conf.int = TRUE) %>%
+  mutate(model = "Smoker at t")
+
+lor_2 <- tidy(model_non_smoker, conf.int = TRUE) %>%
+  mutate(model = "Non-smoker at t")
+
+
+
+# Combine the results
+all_or_data <- bind_rows(or_1, or_2) |>
+  # Filter out the intercept as it's often not directly comparable in this context
+  filter(term != "(Intercept)") 
+
+# Plot the odds ratios
+ggplot(all_or_data, aes(x = estimate, y = term, color = model)) +
+  geom_point(position = position_dodge(width = 0.5)) + # Dodge points for easier comparison
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high),
+                 height = 0.2, position = position_dodge(width = 0.5)) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "gray50") + # Reference line for OR=1
+  labs(
+    title = "Relative odds of being a smoker at t+1",
+    x = "Odds Ratio (with 95% CI)",
+    y = "Predictor Term",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  scale_x_log10() # Use log scale for x-axis if ORs vary widely
+
+
+# put the two summary tables together
+tbl1 = tbl_regression(
+  model_smoker,
+  exponentiate = TRUE,  # Show odds ratios instead of log odds
+)
+
+tbl2 = tbl_regression(
+  model_non_smoker,
+  exponentiate = TRUE,  # Show odds ratios instead of log odds
+)
+
+tbl_merge(
+    tbls = list(tbl1, tbl2),
+    tab_spanner = c("**Smoker at t**", "**Non-smoker at t**")
+  )
+
+
+knitr::kable(lor_1, digits=3)
+knitr::kable(lor_2, digits=3)
+```
+
+## non-smoker at t+1 including interactions with smoking at t
+
+In this version both smokers and non-smokers at time t are included, and the regression is still predicting being a non-smoker at time t+1.
+
+Interaction terms are also included between smoking at t and all of the other time t variables.
+(the coefficients are the same as for the two separate regressions above)
+
+```{r , warning = FALSE , message = FALSE, eval = FALSE}
+# now for the regression with smoking included with interaction
+model_all <- glm(smoker_tplus1 ~ 
+                smoker_t + 
+                  smoker_t : ( 
+                    #interaction of smoking with other variables 
+                    ghq_4plus_t +
+                    age_5cat_t +
+                    sex_t +
+                    imd_quintile_t +
+                    hometenure_t)
+               ,
+              data = log_reg_data, family = "binomial")
+
+#summary(model_all)
+tbl_regression(
+  model_all,
+ # exponentiate = TRUE,  # Show odds ratios instead of log odds
+)
+```
+
+
+  

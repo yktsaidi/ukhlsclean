@@ -1,0 +1,235 @@
+---
+title: "Initial Understanding Society plots fro ASM"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This document explores the data produced from an amended version of ukhlsclean which includes more MH and wellbeing variables. 
+
+These data are used to make initial plots for the ASM presentation.
+
+
+## load the data
+```{r , warning = FALSE , message = FALSE}
+library(ggplot2)
+library(data.table)
+library(tidyverse)
+
+#load the data set 
+load("../../ukhlsclean_data/ukhlsclean_data.RData")
+
+```
+
+## % current smokers by wave 
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+smoker_percentage_by_wave <- data %>%
+  group_by(wave_no) %>%
+  summarise(
+    n_smoker = sum(s_current_smoker == "smoker", na.rm = TRUE),
+    n_non_missing = sum(!is.na(s_current_smoker)), # Count of non-missing values
+    percentage_smoker = (n_smoker / n_non_missing) * 100,
+    .groups = 'drop'
+  )
+
+# Create the bar plot
+ggplot(smoker_percentage_by_wave, aes(x = as.factor(wave_no), y = percentage_smoker)) +
+  geom_bar(stat = "identity",fill = "steelblue") +
+ # geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% Current Smokers by Wave",
+    x = "Wave Number",
+    y = "% Current Smokers"
+  ) +
+  theme_minimal()
+
+# Create the line plot
+ggplot(smoker_percentage_by_wave, aes(x = as.numeric(wave_no), y = percentage_smoker)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_point(color = "steelblue", size = 2) +
+  #geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% Current Smokers by Wave",
+    x = "Wave Number",
+    y = "% Current Smokers"
+  ) +
+  theme_minimal() + scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = unique(as.numeric(smoker_percentage_by_wave$wave_no))) # Ensure all waves are labeled
+
+```
+
+## % GHQ-12 >=4
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+smoker_percentage_by_wave <- data %>%
+  group_by(wave_no) %>%
+  summarise(
+    n_smoker = sum(h_ghq_12 >= 4, na.rm = TRUE),
+    n_non_missing = sum(!is.na(h_ghq_12)), # Count of non-missing values
+    percentage_smoker = (n_smoker / n_non_missing) * 100,
+    .groups = 'drop'
+  )
+
+# Create the bar plot
+ggplot(smoker_percentage_by_wave, aes(x = as.factor(wave_no), y = percentage_smoker)) +
+  geom_bar(stat = "identity",fill = "steelblue") +
+#  geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% GHQ-12 >=4 by Wave",
+    x = "Wave Number",
+    y = "% GHQ-12 >=4"
+  ) +
+  theme_minimal()
+
+# Create the line plot
+ggplot(smoker_percentage_by_wave, aes(x = as.numeric(wave_no), y = percentage_smoker)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_point(color = "steelblue", size = 2) +
+#  geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% GHQ-12 >=4 by Wave",
+    x = "Wave Number",
+    y = "% GHQ-12 >=4"
+  ) +
+  theme_minimal() + scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = unique(as.numeric(smoker_percentage_by_wave$wave_no))) # Ensure all waves are labeled
+
+```
+
+
+## % GHQ-12 >=4 by current smoker
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+smoker_percentage_by_wave <- data %>%
+  group_by(wave_no, s_current_smoker) %>%
+  summarise(
+    n_smoker = sum(h_ghq_12 >= 4, na.rm = TRUE),
+    n_non_missing = sum(!is.na(h_ghq_12)), # Count of non-missing values
+    percentage_smoker = (n_smoker / n_non_missing) * 100,
+    .groups = 'drop'
+  )
+
+# Create the line plot
+ggplot(filter(smoker_percentage_by_wave, !is.na(s_current_smoker)), aes(x = as.numeric(wave_no), y = percentage_smoker, color = s_current_smoker, group = s_current_smoker)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  #geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% GHQ-12 >=4 by Wave and Current Smoker",
+    x = "Wave Number",
+    y = "% GHQ-12 >=4"
+  ) +
+  labs(colour = NULL) +
+  theme_minimal() + scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = unique(as.numeric(smoker_percentage_by_wave$wave_no))) # Ensure all waves are labeled
+
+```
+
+## % current smoker for those living in household with children
+
+using Age of youngest child in household: hh_age_yngchl
+
+i.e. of people living in a houseghold wih children (15 or younger), what proportion smoke?
+
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+smoker_percentage_by_wave <- data %>%
+  filter(!is.na(hh_age_yngchl)&hh_age_yngchl!="no_children") %>%
+  group_by(wave_no) %>%
+ summarise(
+    n_smoker = sum(s_current_smoker == "smoker", na.rm = TRUE),
+    n_non_missing = sum(!is.na(s_current_smoker)), # Count of non-missing values
+    percentage_smoker = (n_smoker / n_non_missing) * 100,
+    .groups = 'drop'
+  )
+
+# Create the bar plot
+ggplot(smoker_percentage_by_wave, aes(x = as.factor(wave_no), y = percentage_smoker)) +
+  geom_bar(stat = "identity",fill = "steelblue") +
+#  geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% Current smoker by wave for those in household with children",
+    x = "Wave number",
+    y = "% Current smoker"
+  ) +
+  theme_minimal()
+
+# Create the line plot
+ggplot(smoker_percentage_by_wave, aes(x = as.numeric(wave_no), y = percentage_smoker)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_point(color = "steelblue", size = 2) +
+#  geom_text(aes(label = paste0(round(percentage_smoker, 1), "%")), vjust = -0.5) +
+  labs(
+    title = "% Current smoker by wave for those in household with children",
+    x = "Wave number",
+    y = "% Current smoker"
+  ) +
+  labs(colour = NULL) +
+  theme_minimal() + scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = unique(as.numeric(smoker_percentage_by_wave$wave_no))) # Ensure all waves are labeled
+
+```
+
+## logistic regression
+
+make a logistic regression for giving up smoking at t+1 using:
+
+* GHQ-12 >=4: h_ghq_12 >= 4
+* Age: d_age_5cat (age split in 5 categories)
+* Sex: d_sex
+* IMD quintile: d_imd_quintile
+* Housing: hh_hometenure
+
+
+```{r , warning = FALSE , message = FALSE}
+# Calculate the percentage of smokers by wave, excluding NA from the denominator
+log_reg_data <- data |>
+  mutate(
+    ghq_4plus = (h_ghq_12 >= 4)*1, #make ghq >=4 variable
+    non_smoker_tplus1 = 1*(s_current_smoker=="non_smoker")
+  ) |> #now make lagged version of variables as using t to predict quiting at t+1
+  group_by(pidp) %>%
+  arrange(wave_no) %>%
+  mutate(smoker_t = lag(s_current_smoker, n = 1, default = NA),
+         ghq_4plus_t = lag(ghq_4plus, n = 1, default = NA),
+         d_age_5cat_t = lag(d_age_5cat, n = 1, default = NA),
+         d_sex_t = lag(d_sex, n = 1, default = NA),
+         d_imd_quintile_t = lag(d_imd_quintile, n = 1, default = NA),
+         hh_hometenure_t = lag(hh_hometenure, n = 1, default = NA)) %>%
+  ungroup() |>
+  #now filter to those who were smokers at t
+  filter(smoker_t=="smoker") |>
+  # npw remove rows with missing values for our selected variables 
+  drop_na(non_smoker_tplus1,
+          ghq_4plus_t,
+          d_age_5cat_t,
+          d_sex_t,
+          d_imd_quintile_t,
+          hh_hometenure_t)
+
+
+# now for the regression
+model1 <- glm(non_smoker_tplus1 ~ 
+                as.factor(ghq_4plus_t) +
+                as.factor(d_age_5cat_t) +
+                as.factor(d_sex_t) +
+                as.factor(d_imd_quintile_t) +
+                as.factor(hh_hometenure_t),
+              data = log_reg_data, family = "binomial")
+
+summary(model1)
+```
+
+Looking at the log odds:
+
+* GHQ-12 >=4: people with probable MH problems were less likely to be non-smokers at t+1
+* Age: compared to youngest age group, older groups less likely to be non-smokers at t+1
+* Sex: no significant difference in likeliness to be non-smokers at t+1
+* IMD quintile: compared to least deprived group, those in more deprived groups less likely to be non-smokers at t+1
+* Housing: compared to owner occupiers, those renting (especially social renters) less likely to be non-smokers at t+1
+
