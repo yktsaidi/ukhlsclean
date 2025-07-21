@@ -29,8 +29,9 @@ ukhls_clean_health <- function(data = NULL) {
   ### was inpatient in last 12 months ###
   if("inpatient" %in% colnames(data)) {
     data[!(inpatient %in% c(1, 2)), inpatient := NA]
-    data[inpatient == 1, inpatient := "yes"]
-    data[inpatient == 2, inpatient := "no"]
+    data[, inpatient := as.character(inpatient)]
+    data[inpatient == "1", inpatient := "yes"]
+    data[inpatient == "2", inpatient := "no"]
 
     data[, inpatient := as.factor(inpatient)]
   }
@@ -39,11 +40,12 @@ ukhls_clean_health <- function(data = NULL) {
   ### outpatient visits in last 12 months ###
   if("outpatient" %in% colnames(data)) {
     data[!(outpatient %in% 0:4), outpatient := NA]
-    data[outpatient == 0, outpatient := "none"]
-    data[outpatient == 1, outpatient := "1_or_2"]
-    data[outpatient == 2, outpatient := "3_to_5"]
-    data[outpatient == 3, outpatient := "6_to_10"]
-    data[outpatient == 4, outpatient := "over_10"]
+    data[, outpatient := as.character(outpatient)]
+    data[outpatient == "0", outpatient := "none"]
+    data[outpatient == "1", outpatient := "1_or_2"]
+    data[outpatient == "2", outpatient := "3_to_5"]
+    data[outpatient == "3", outpatient := "6_to_10"]
+    data[outpatient == "4", outpatient := "over_10"]
 
     data[, outpatient := as.factor(outpatient)]
   }
@@ -51,11 +53,12 @@ ukhls_clean_health <- function(data = NULL) {
   ### gp visits in last 12 months ###
   if("gp" %in% colnames(data)) {
     data[!(gp %in% 0:4), gp := NA]
-    data[gp == 0, gp := "none"]
-    data[gp == 1, gp := "1_or_2"]
-    data[gp == 2, gp := "3_to_5"]
-    data[gp == 3, gp := "6_to_10"]
-    data[gp == 4, gp := "over_10"]
+    data[, gp := as.character(gp)]
+    data[gp == "0", gp := "none"]
+    data[gp == "1", gp := "1_or_2"]
+    data[gp == "2", gp := "3_to_5"]
+    data[gp == "3", gp := "6_to_10"]
+    data[gp == "4", gp := "over_10"]
 
     data[, gp := as.factor(gp)]
   }
