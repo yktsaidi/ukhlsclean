@@ -22,383 +22,430 @@ library(ukhlsclean)
 
 This document details the cleaned variables from the Understanding Society dataset which are available through using the `ukhlsclean` package, grouped by cleaning function category. Where not otherwise specified, variables are available in all waves of the data
 
-### __Global variables__
+### **Global variables**
 
-These variables are identifier and weighting variables produced automatically and should not be specified in the `keep_vars` argument to the `ukhlsclean` function. 
+These variables are identifier and weighting variables produced automatically and should not be specified in the `keep_vars` argument to the `ukhlsclean` function.
 
-- __id__ (numeric) individual identifier. 
-    - Constructed from the `pidp` variable for individuals sampled by the UKHLS or from the `pid` variable for              individuals carried over from the British Household Panel Survey (BHPS). For those individuals, __id__ can be linked to __pid__ in the BHPS data.
-    
-- __hidp__ (numeric) household identifier. 
+-   **id** (numeric) individual identifier.
 
-- __wave_no__ (numeric) wave the observation is taken from.
+    -   Constructed from the `pidp` variable for individuals sampled by the UKHLS or from the `pid` variable for individuals carried over from the British Household Panel Survey (BHPS). For those individuals, **id** can be linked to **pid** in the BHPS data.
 
-- __bhps_sample__ (logical) if TRUE, the individual was carried over from the BHPS. 
+-   **hidp** (numeric) household identifier.
 
-- __nwaves__ (numeric) number of waves the individual has observations for. 
+-   **wave_no** (numeric) wave the observation is taken from.
 
-- __wave_(1-11)__ (numeric) individual identifier, equal to 1 if the individual was observed in the respective wave, 0 otherwise.
+-   **bhps_sample** (logical) if TRUE, the individual was carried over from the BHPS.
 
-- __year__ (numeric) interview date - year.
+-   **nwaves** (numeric) number of waves the individual has observations for.
 
-- __month__ (numeric) interview date - month.
+-   **wave\_(1-11)** (numeric) individual identifier, equal to 1 if the individual was observed in the respective wave, 0 otherwise.
 
-- __day__ (numeric) interview date - day.
+-   **year** (numeric) interview date - year.
 
-- __weight_xw__ (numeric) cross-sectional survey weight, for weighting one wave to the population.
+-   **month** (numeric) interview date - month.
 
-- __pop_factor__ (numeric) **CALENDAR YEAR DATA ONLY**. Population scaling factor. The number of individuals in the total population represented by each observation.
- 
-### __Demographic variables__ 
+-   **day** (numeric) interview date - day.
 
-Variables produced by the demographic module `ukhls_clean_demographic`. Variables in this category are prefixed with a `d_`. 
+-   **weight_xw** (numeric) cross-sectional survey weight, for weighting one wave to the population.
 
-- __d_age__ (numeric) continuous, single-year of age
+-   **pop_factor** (numeric) **CALENDAR YEAR DATA ONLY**. Population scaling factor. The number of individuals in the total population represented by each observation.
 
-- __d_age_5cat__ (factor) age category - 5 categories:
-    -  "16-24"
-    -  "25-34"
-    -  "35-49"
-    -  "50-64"
-    -  "65+"
+### **Demographic variables**
 
-- __d_age_12cat__ (factor) age category - 12 categories:
-    -  "16-19"
-    -  "20-24"
-    -  "25-29"
-    -  "30-34"
-    -  "35-39"
-    -  "40-44"
-    -  "45-49"
-    -  "50-54"
-    -  "55-59"
-    -  "60-64"
-    -  "65-69"
-    -  "70+"
+Variables produced by the demographic module `ukhls_clean_demographic`. Variables in this category are prefixed with a `d_`.
 
-- __d_sex__  (factor) sex:
-  - "male"
-  - "female"
-  
-- __d_imd_quintile__ (factor) Index of Multiple Deprivation (IMD) quintile **(not available in calendar year data)**:
-  - "1_least_deprived"
-  - "2"
-  - "3"
-  - "4"
-  - "5_most_deprived"
+-   **d_age** (numeric) continuous, single-year of age
 
-- __d_gor__  (factor) government office region:
-  - "north_east"
-  - "north_west"
-  - "yorkshire"
-  - "east_midlands"
-  - "west_idlands"
-  - "east"
-  - "london"
-  - "south_east"
-  - "south_west"
-  - "wales"
-  - "scotland"
-  - "northern_ireland"
-  
-- __d_country__ (factor) country:
-  - "england"
-  - "wales"
-  - "scotland"
-  - "northern_ireland"
-  
-- __d_area__ (factor) urban or rural area:
-  - "urban"
-  - "rural"
-  
-- __d_marital__ (factor) marital status:
-  - "married"
-  - "single"
-  - "sep_div_wid" (separated, divorced, or widowed)
-  
-- __d_hiqual__ (factor) highest qualification level achieved:
-  - "degree"
-  - "other_he"
-  - "alevel" 
-  - "gcse"
-  - "other_qual"
-  - "no_qual"
-  
-- __d_ethnicity_2cat__  (factor) ethnicity - 2 categories:
-  - "white"
-  - "non_white"
+-   **d_age_5cat** (factor) age category - 5 categories:
 
-- __d_ethnicity_5cat__  (factor) ethnicity - 5 categories:
-   - "white"
-   - "black"
-   - "asian"
-   - "mixed"
-   - "other"
-   
-- __d_ethnicity_9cat__  (factor) ethnicity - 9 categories:
-   - "white_british"
-   - "white_non_british"
-   - "mixed"
-   - "indian"
-   - "pakistani"
-   - "bangladeshi"
-   - "other_asian"
-   - "black"
-   - "other"
-   
-### __Household variables__
+    -   "16-24"
+    -   "25-34"
+    -   "35-49"
+    -   "50-64"
+    -   "65+"
 
-Variables produced by the household module `ukhls_clean_hhold`. Variables in this category are prefixed with a `hh_`. 
+-   **d_age_12cat** (factor) age category - 12 categories:
 
-- __hh_hometenure__ (factor) household occupancy type:
-   - "owner_occupier"
-   - "private_renter"
-   - "social_renter"
-   
-- __hh_age_yngchl__ (factor) age of the youngest child in the household:
-   - "no_children"
-   - "0-2"
-   - "3-4"
-   - "5-11"
-   - "12-15"
-   
-- __hh_type_6cat__ (factor) household composition:
-   - "1 adult 0 children"
-   - "1 adult 1+ children"
-   - "2 adult 0 children"
-   - "2 adult 1+ children"
-   - "3+ adult 0 children"
-   - "3+ adult 1+ children"
-   
-- __hh_numadult__ (numeric) number of adults in the household 
+    -   "16-19"
+    -   "20-24"
+    -   "25-29"
+    -   "30-34"
+    -   "35-39"
+    -   "40-44"
+    -   "45-49"
+    -   "50-54"
+    -   "55-59"
+    -   "60-64"
+    -   "65-69"
+    -   "70+"
 
-- __hh_numchild__ (numeric) number of children in the household 
+-   **d_sex** (factor) sex:
 
-- __hh_size__ (numeric) household size (number of adults plus children) 
-   
-### __Economic status variables__
+    -   "male"
+    -   "female"
+
+-   **d_imd_quintile** (factor) Index of Multiple Deprivation (IMD) quintile **(not available in calendar year data)**:
+
+    -   "1_least_deprived"
+    -   "2"
+    -   "3"
+    -   "4"
+    -   "5_most_deprived"
+
+-   **d_gor** (factor) government office region:
+
+    -   "north_east"
+    -   "north_west"
+    -   "yorkshire"
+    -   "east_midlands"
+    -   "west_idlands"
+    -   "east"
+    -   "london"
+    -   "south_east"
+    -   "south_west"
+    -   "wales"
+    -   "scotland"
+    -   "northern_ireland"
+
+-   **d_country** (factor) country:
+
+    -   "england"
+    -   "wales"
+    -   "scotland"
+    -   "northern_ireland"
+
+-   **d_area** (factor) urban or rural area:
+
+    -   "urban"
+    -   "rural"
+
+-   **d_marital** (factor) marital status:
+
+    -   "married"
+    -   "single"
+    -   "sep_div_wid" (separated, divorced, or widowed)
+
+-   **d_hiqual** (factor) highest qualification level achieved:
+
+    -   "degree"
+    -   "other_he"
+    -   "alevel"
+    -   "gcse"
+    -   "other_qual"
+    -   "no_qual"
+
+-   **d_ethnicity_2cat** (factor) ethnicity - 2 categories:
+
+    -   "white"
+    -   "non_white"
+
+-   **d_ethnicity_5cat** (factor) ethnicity - 5 categories:
+
+    -   "white"
+    -   "black"
+    -   "asian"
+    -   "mixed"
+    -   "other"
+
+-   **d_ethnicity_9cat** (factor) ethnicity - 9 categories:
+
+    -   "white_british"
+    -   "white_non_british"
+    -   "mixed"
+    -   "indian"
+    -   "pakistani"
+    -   "bangladeshi"
+    -   "other_asian"
+    -   "black"
+    -   "other"
+
+### **Household variables**
+
+Variables produced by the household module `ukhls_clean_hhold`. Variables in this category are prefixed with a `hh_`.
+
+-   **hh_hometenure** (factor) household occupancy type:
+
+    -   "owner_occupier"
+    -   "private_renter"
+    -   "social_renter"
+
+-   **hh_age_yngchl** (factor) age of the youngest child in the household:
+
+    -   "no_children"
+    -   "0-2"
+    -   "3-4"
+    -   "5-11"
+    -   "12-15"
+
+-   **hh_type_6cat** (factor) household composition:
+
+    -   "1 adult 0 children"
+    -   "1 adult 1+ children"
+    -   "2 adult 0 children"
+    -   "2 adult 1+ children"
+    -   "3+ adult 0 children"
+    -   "3+ adult 1+ children"
+
+-   **hh_numadult** (numeric) number of adults in the household
+
+-   **hh_numchild** (numeric) number of children in the household
+
+-   **hh_size** (numeric) household size (number of adults plus children)
+
+### **Economic status variables**
 
 Variables produced by the economic and labour market status module `ukhls_clean_econstat`. Variables in this category are prefixed with an `l_`
-   
-- __l_econ_stat_2cat__ (factor) economic status, 2 category:
-  - "employed"
-  - "not_employed"
-  
-- __l_econ_stat_3cat__ (factor) economic status, 3 category:
-  - "employed"
-  - "unemployed"
-  - "inactive"
-  
-- __l_econ_stat_7cat__ (factor) economic status, 7 category:
-  - "employed"
-  - "self_employed"
-  - "unemployed"
-  - "sick"
-  - "retired"
-  - "education"
-  - "other"
-  
-- __l_grss_earnings_usual__ (numeric) nominal gross earnings per month from employment (usual pay) plus self-employment earnings.
 
-- __l_grss_earnings_last__ (numeric) nominal gross earnings per month from employment (last received payment) plus self-employment earnings.
+-   **l_econ_stat_2cat** (factor) economic status, 2 category:
 
-- __l_grss_earnings_usual_empl__ (numeric) nominal gross earnings per month from employment (usual pay).
+    -   "employed"
+    -   "not_employed"
 
-- __l_grss_earnings_last_empl__ (numeric) nominal gross earnings per month from employment (last received payment).
+-   **l_econ_stat_3cat** (factor) economic status, 3 category:
 
-- __l_real_grss_earnings_usual__ (numeric) real gross earnings per month from employment (usual pay) plus self-employment earnings.
+    -   "employed"
+    -   "unemployed"
+    -   "inactive"
 
-- __l_real_grss_earnings_last__ (numeric) real gross earnings per month from employment (last received payment) plus self-employment earnings.
+-   **l_econ_stat_7cat** (factor) economic status, 7 category:
 
-- __l_real_grss_earnings_usual_empl__ (numeric) real gross earnings per month from employment (usual pay).
+    -   "employed"
+    -   "self_employed"
+    -   "unemployed"
+    -   "sick"
+    -   "retired"
+    -   "education"
+    -   "other"
 
-- __l_real_grss_earnings_last_empl__ (numeric) real gross earnings per month from employment (last received payment). 
+-   **l_grss_earnings_usual** (numeric) nominal gross earnings per month from employment (usual pay) plus self-employment earnings.
 
-- __l_real_grss_earnings_usual_semp__ (numeric) real gross earnings per month from self-employment.
+-   **l_grss_earnings_last** (numeric) nominal gross earnings per month from employment (last received payment) plus self-employment earnings.
 
+-   **l_grss_earnings_usual_empl** (numeric) nominal gross earnings per month from employment (usual pay).
 
-### __Work variables__
+-   **l_grss_earnings_last_empl** (numeric) nominal gross earnings per month from employment (last received payment).
+
+-   **l_real_grss_earnings_usual** (numeric) real gross earnings per month from employment (usual pay) plus self-employment earnings.
+
+-   **l_real_grss_earnings_last** (numeric) real gross earnings per month from employment (last received payment) plus self-employment earnings.
+
+-   **l_real_grss_earnings_usual_empl** (numeric) real gross earnings per month from employment (usual pay).
+
+-   **l_real_grss_earnings_last_empl** (numeric) real gross earnings per month from employment (last received payment).
+
+-   **l_real_grss_earnings_usual_semp** (numeric) real gross earnings per month from self-employment.
+
+### **Work variables**
 
 Variables produced by the work module `ukhls_clean_work`. Variables in this category are prefixed with a `w_`
 
-- __w_hours_empl__ (numeric) usual weekly hours worked in employment. 
-   
-- __w_hours_semp__ (numeric) usual weekly hours worked in self-employment. 
+-   **w_hours_empl** (numeric) usual weekly hours worked in employment.
 
-- __w_hours__  (numeric) usual weekly hours worked - employment plus self-employment.
+-   **w_hours_semp** (numeric) usual weekly hours worked in self-employment.
 
-- __w_sic_1dig__ (factor) industry of main employment (based mainly on 1-digit SIC-2007, with some differences).
+-   **w_hours** (numeric) usual weekly hours worked - employment plus self-employment.
 
-- __w_sic_2dig__ (factor) industry of main employment (2-digit SIC-2007).
+-   **w_sic_1dig** (factor) industry of main employment (based mainly on 1-digit SIC-2007, with some differences).
 
+-   **w_sic_2dig** (factor) industry of main employment (2-digit SIC-2007).
 
-### __Benefits, pension and credits variables__
+### **Benefits, pension and credits variables**
 
 Variables produced by the benefits module `ukhls_clean_benefit`. All variables indicate a tick determining whether respondents are in receipt, with the possible following outputs:
 
-- "receipt"
-- "non_receipt"
+-   "receipt"
+-   "non_receipt"
 
-Variables in this category are prefixed with a `b_`. 
+Variables in this category are prefixed with a `b_`.
 
-- __b_income_support__ (factor) currently in receipt of Income Support:
+-   **b_income_support** (factor) currently in receipt of Income Support:
 
-- __b_jbseek_allowance__ (factor) currently in receipt of Job Seeker's Allowance:
+-   **b_jbseek_allowance** (factor) currently in receipt of Job Seeker's Allowance:
 
-- __b_national_pen_cred__ (factor) currently in receipt of any State pension or credit:
+-   **b_national_pen_cred** (factor) currently in receipt of any State pension or credit:
 
-- __b_child_benefit__ (factor) currently in receipt of Child Benefit:
+-   **b_child_benefit** (factor) currently in receipt of Child Benefit:
 
-- __b_child_tax_credit__ (factor) currently in receipt of Child Tax Credits:
+-   **b_child_tax_credit** (factor) currently in receipt of Child Tax Credits:
 
-- __b_other_family_benefit__ (factor) currently in receipt of any other family related benefit or payment ():
+-   **b_other_family_benefit** (factor) currently in receipt of any other family related benefit or payment ():
 
-- __b_housing_council_rent_rate__ (factor) currently in receipt of any of - housing benefit; council tax benefit/reduction; rent rebate; rate rebate:
+-   **b_housing_council_rent_rate** (factor) currently in receipt of any of - housing benefit; council tax benefit/reduction; rent rebate; rate rebate:
 
-- __b_other_ben_cred__ (factor) currently in receipt of any other benefit or credit:
+-   **b_other_ben_cred** (factor) currently in receipt of any other benefit or credit:
 
-- __b_incap_ben__ (factor) currently in receipt of Incapacity Benefit:
+-   **b_incap_ben** (factor) currently in receipt of Incapacity Benefit:
 
-- __b_ES_Allowance__ (factor) currently in receipt of Employment and Support Allowance:
+-   **b_ES_Allowance** (factor) currently in receipt of Employment and Support Allowance:
 
-- __b_sev_disab_allowance__ (factor) currently in receipt of Severe Disablement Allowance:
+-   **b_sev_disab_allowance** (factor) currently in receipt of Severe Disablement Allowance:
 
-- __b_carers_allowance__ (factor) currently in receipt of Carer's Allowance:
+-   **b_carers_allowance** (factor) currently in receipt of Carer's Allowance:
 
-- __b_disliving_allowance__ (factor) currently in receipt of Disability Living Allowance:
+-   **b_disliving_allowance** (factor) currently in receipt of Disability Living Allowance:
 
-- __b_pers.indep_pay__ (factor) currently in receipt of Personal Independence Payments __(waves 3-12)__:
+-   **b_pers.indep_pay** (factor) currently in receipt of Personal Independence Payments **(waves 3-12)**:
 
-- __b_attend_allowance__ (factor) currently in receipt of Attendance Allowance:
+-   **b_attend_allowance** (factor) currently in receipt of Attendance Allowance:
 
-- __b_industry_inj_ben__ (factor) currently in receipt of Industrial Injury Disablement Benefit:
+-   **b_industry_inj_ben** (factor) currently in receipt of Industrial Injury Disablement Benefit:
 
-- __b_sick.accident_insurance__ (factor) currently in receipt of Sickness and Accidence Insurance:
+-   **b_sick.accident_insurance** (factor) currently in receipt of Sickness and Accidence Insurance:
 
-- __b_oth_disab_ben__ (factor) currently in receipt of any other disability related benefit or payment:
+-   **b_oth_disab_ben** (factor) currently in receipt of any other disability related benefit or payment:
 
-- __b_war_pen__ (factor) currently in receipt of War Disablement Pension:
+-   **b_war_pen** (factor) currently in receipt of War Disablement Pension:
 
-- __b_SERPs__ (factor) currently in receipt of National Insurance State Earnings-Related Pension Scheme (NI SERPS) __(waves 1-11)__:
+-   **b_SERPs** (factor) currently in receipt of National Insurance State Earnings-Related Pension Scheme (NI SERPS) **(waves 1-11)**:
 
-- __b_NI_state_pension__ (factor) currently in receipt of National Insurance Pension or State Retirement (Old Age) Pension:
+-   **b_NI_state_pension** (factor) currently in receipt of National Insurance Pension or State Retirement (Old Age) Pension:
 
-- __b_pension_credit__ (factor) currently in receipt of Pension Credit including Guarantee Credits & Savings Credit:
+-   **b_pension_credit** (factor) currently in receipt of Pension Credit including Guarantee Credits & Savings Credit:
 
-- __b_NI_credit__ (factor) currently in receipt of National Insurance credits __(waves 1-5)__:
+-   **b_NI_credit** (factor) currently in receipt of National Insurance credits **(waves 1-5)**:
 
-- __b_council_tax_benefit__ (factor) currently in receipt of Council Tax Benefits/Reduction: 
+-   **b_council_tax_benefit** (factor) currently in receipt of Council Tax Benefits/Reduction:
 
-- __b_housing_benefit__ (factor) currently in receipt of Housing Benefit:
+-   **b_housing_benefit** (factor) currently in receipt of Housing Benefit:
 
-- __b_rate_rebate__ (factor) currently in receipt of a Rate Rebate (GB-NIR only):
+-   **b_rate_rebate** (factor) currently in receipt of a Rate Rebate (GB-NIR only):
 
-- __b_rent_rebate__ (factor) currently in receipt of a Rent Rebate (GB-NIR only):
+-   **b_rent_rebate** (factor) currently in receipt of a Rent Rebate (GB-NIR only):
 
-- __b_iw_lone_cred__ (factor) currently in receipt of In-Work Credit for Lone Parents __(waves 1-11)__:
+-   **b_iw_lone_cred** (factor) currently in receipt of In-Work Credit for Lone Parents **(waves 1-11)**:
 
-- __b_RTW_cred__ (factor) currently in receipt of Return-to-work Credit __(waves 1-11)__:
+-   **b_RTW_cred** (factor) currently in receipt of Return-to-work Credit **(waves 1-11)**:
 
-- __b_work_tax_cred__ (factor) currently in receipt of Working Tax Credits:
+-   **b_work_tax_cred** (factor) currently in receipt of Working Tax Credits:
 
-- __b_universal_cred__ (factor) currently in receipt of Universal Credit:
+-   **b_universal_cred** (factor) currently in receipt of Universal Credit:
 
-- __b_UniCred__ (factor) proxy for Universal Credit, given that respondent is in receipt of a related benefit *(child tax credits; housing benefit; income support; income-related job seeker's allowance; income-related ESA; working tax credits)*:
+-   **b_UniCred** (factor) proxy for Universal Credit, given that respondent is in receipt of a related benefit *(child tax credits; housing benefit; income support; income-related job seeker's allowance; income-related ESA; working tax credits)*:
 
+### **Health and wellbeing variables**
 
-### __Health and wellbeing variables__ 
+Variables produced by the health and wellbeing module `ukhls_clean_health`. Variables in this category are prefixed with a `h_`.
 
-Variables produced by the health and wellbeing module `ukhls_clean_health`. Variables in this category are prefixed with a `h_`. 
+-   **h_eq5d_score** (numeric) EQ-5D utility score:
+    -   health utility mapped from the SF-12 variables in Understanding Society using the [mapping algorithm](https://www.herc.ox.ac.uk/downloads/downloads-supporting-material-1/sf-12-responses-and-eq-5d-utility-values) developed by:
+    -   Gray A, Rivero-Arias O, and Clarke P (2006). Estimating the association between SF-12 responses and EQ-5D utility values by response mapping. *Medical Decision Making*; 26(1):18-29
+-   **h_pregnant** (factor) currently pregnant:
+    -   "not_pregnant"
+    -   "pregnant"
+-   **h_disability** (factor) individual has a disability:
+    -   "disability"
+    -   "no_disability"
+-   **h_care_hhold** (factor) individual cares for someone in their household:
+    -   "carer"
+    -   "not_carer"
+-   **h_satisfaction_health** (factor) satisfaction with health:
+    -   "completely_disatisfied"
+    -   "mostly_disatisfied"
+    -   "somewhat_disatisfied"
+    -   "neutral"
+    -   "somewhat_satisfied"
+    -   "mostly_satisfied"
+    -   "completely_satisfied"
+-   **h_satisfaction_life** (factor) satisfaction with life overall:
+    -   "completely_disatisfied"
+    -   "mostly_disatisfied"
+    -   "somewhat_disatisfied"
+    -   "neutral"
+    -   "somewhat_satisfied"
+    -   "mostly_satisfied"
+    -   "completely_satisfied"
+-   **h_ghq_36** (numeric) [scghq1_dv](https://www.understandingsociety.ac.uk/documentation/mainstage/variables/scghq1_dv/) subjective wellbeing (GHQ) Likert
+    -   Converts valid answers to 12 questions of the General Health Questionnaire (GHQ) to a single scale
+    -   Recodes the values of individual variables from 1 to 4 to 0 to 3 and before summing them
+    -   Gives total scores from 0 to 36
+    -   Higher scores indicate greater distress
+-   **ghq_12** (numeric) [scghq2_dv](https://www.understandingsociety.ac.uk/documentation/mainstage/variables/scghq2_dv/) subjective wellbeing (GHQ) Caseness
+    -   Converts valid answers to 12 questions of the General Health Questionnaire (GHQ) to a single scale
+    -   Recodes the values of individual variables of 1 and 2 to 0 and 3 and 4 to 1 from before summing them
+    -   Gives total scores from 0 to 12
+    -   Higher scores indicate greater distress
+-   **h_wemwbs** (waves 1, 4, 7, 10, 13)
+    -   From the 7 item short version of the Warwich-Edinburgh Mental Wellbeing scale
+    -   Scored on a 5 point Likert scal, form none of the time to all of the time
+    -   Gives total scores ranging form 7 to 35
+    -   Higher scores indicate higher levels of wellbeing
+-   **h_job_anx** (numeric) [jwbs1_dv](https://www.understandingsociety.ac.uk/documentation/mainstage/variables/jwbs1_dv/) Job related wellbeing scale: anxiety subscale (waves 2, 4, 6, 8, 10, 12, 14)
+    -   Scores range from 3 to 15
+    -   Higher values represent lower levels of anxiety
+-   **h_job_dep** (numeric) [jwbs2_dv](https://www.understandingsociety.ac.uk/documentation/mainstage/variables/jwbs2_dv/) Job related wellbeing scale: depression subscale (waves 2, 4, 6, 8, 10, 12, 14)
+    -   Scores range from 3 to 15
+    -   Higher values represent lower levels of depression
+-   **h_vigdays** (numeric) [vday](https://www.understandingsociety.ac.uk/documentation/mainstage/variables/vday/) days of vigorous activity in last 7 days (waves 7, 9, 11, 12, 13)
+    -   Question: Vigorous activities make you breathe much harder than normal and may include heavy lifting, digging, aerobics, or fast bicycling. Think only about those physical activities that you did for at least 10 minutes at a time. During the last 7 days, on how many days did you do vigorous physical activities?
+-   **h_gp** (waves 7-14) [hl2gp](https://www.understandingsociety.ac.uk/documentation/mainstage/variables/hl2gp/) Number of GP visits in last 12 months
+    -   "none"
+    -   "1_or_2"
+    -   "3_to_5"
+    -   "6_to_10"
+    -   "over_10"
+-   **h_inpatient** (waves 7-14)[hosp](https://www.understandingsociety.ac.uk/documentation/mainstage/variables/hosp/) hospital or clinic inpatient in last 12 month
+    -   "yes"
+    -   "no"
+-   **h_outpatient** (waves 7-14)[hl2hop](https://www.understandingsociety.ac.uk/documentation/mainstage/variables/hl2hop/) Number of hospital or clinic outpatient visits in last 12 month
+    -   "none"
+    -   "1_or_2"
+    -   "3_to_5"
+    -   "6_to_10"
+    -   "over_10"
 
-- __h_eq5d_score__  (numeric) EQ-5D utility score:
-   - health utility mapped from the SF-12 variables in Understanding Society using the [mapping algorithm](https://www.herc.ox.ac.uk/downloads/downloads-supporting-material-1/sf-12-responses-and-eq-5d-utility-values) developed by:
-   - Gray A, Rivero-Arias O, and Clarke P (2006). Estimating the association between SF-12 responses and EQ-5D utility values by response mapping. *Medical Decision Making*; 26(1):18-29
-   
-- __h_pregnant__ (factor) currently pregnant:
-  - "not_pregnant"
-  - "pregnant"
+### **Alcohol variables**
 
+Variables produced by the alcohol and drinking module `ukhls_clean_alcohol`. Variables in this category are prefixed with a `a_`.
 
-- __h_disability__  (factor) individual has a disability:
-   - "disability"
-   - "no_disability"
+-   **a_current_abstainer** (factor) currently an abstainer from alcohol (past 12 months) **(waves 7, 9, 11)**:
+    -   "no"
+    -   "yes"
+-   **a_always_abstainer** (factor) has always been an abstainer from alcohol **(waves 7, 9, 11)**:
+    -   "no"
+    -   "yes"
+-   **a_ndrinks** (factor) number of drinks in a typical day when drinking **(waves 7, 9, 11)**:
+    -   "0"
+    -   "1-2"
+    -   "3-4"
+    -   "5-6"
+    -   "7-9"
+    -   "10+"
+-   **a_freq_binge** (factor) frequency binge drinks. Frequency of drinking more than 6 (female) or 8 (male) units on a single occassion in the last year **(waves 7, 9, 11)**:
+    -   "Never"
+    -   "Less than monthly"
+    -   "Monthly"
+    -   "Weekly"
+    -   "Daily"
 
+### **Smoking variables**
 
-- __h_care_hhold__  (factor) individual cares for someone in their household:
-   - "carer"
-   - "not_carer"
-   
-- __h_satisfaction_health__  (factor) satisfaction with health:
-   - "completely_disatisfied"
-   - "mostly_disatisfied"
-   - "somewhat_disatisfied"
-   - "neutral"
-   - "somewhat_satisfied"
-   - "mostly_satisfied"
-   - "completely_satisfied"
-   
-- __h_satisfaction_life__  (factor) satisfaction with life overall:
-   - "completely_disatisfied"
-   - "mostly_disatisfied"
-   - "somewhat_disatisfied"
-   - "neutral"
-   - "somewhat_satisfied"
-   - "mostly_satisfied"
-   - "completely_satisfied"
+Variables produced by the tobacco and smoking module `ukhls_clean_smoke`. Variables in this category are prefixed with a `s_`.
 
-### __Alcohol variables__ 
+-   **s_current_smoker** (factor) currently smokes **(waves 2, 5-12)**:
 
-Variables produced by the alcohol and drinking module `ukhls_clean_alcohol`. Variables in this category are prefixed with a `a_`. 
+    -   "non_smoker"
+    -   "smoker"
 
-- __a_current_abstainer__  (factor) currently an abstainer from alcohol (past 12 months) __(waves 7, 9, 11)__:
-  - "no"
-  - "yes"
+-   **s_ever_smoked** (factor) ever smoked a cigarette, cigar, or pipe **(waves 2, 5)**:
 
-- __a_always_abstainer__  (factor) has always been an abstainer from alcohol __(waves 7, 9, 11)__:
-  - "no"
-  - "yes"
+    -   "never_smoked"
+    -   "smoked"
 
-- __a_ndrinks__  (factor) number of drinks in a typical day when drinking __(waves 7, 9, 11)__:
-  - "0"
-  - "1-2"
-  - "3-4"
-  - "5-6"
-  - "7-9"
-  - "10+"
-  
-- __a_freq_binge__  (factor) frequency binge drinks. Frequency of drinking more than 6 (female) or 8 (male) units on a single occassion in the last year __(waves 7, 9, 11)__:
-  - "Never"
-  - "Less than monthly"
-  - "Monthly"
-  - "Weekly"
-  - "Daily"
-  
-  
-### __Smoking variables__ 
+-   **s_smk_age_start** (numeric) age started smoking regularly **(waves 2, 5)**:
 
-Variables produced by the tobacco and smoking module `ukhls_clean_smoke`. Variables in this category are prefixed with a `s_`. 
+-   **s_othersmoker_hhold** (factor) are there other smokers in the household? **(waves 2, 5-12)**:
 
-- __s_current_smoker__  (factor) currently smokes __(waves 2, 5-12)__:
-  - "non_smoker"
-  - "smoker"
+    -   "no"
+    -   "yes"
 
-- __s_ever_smoked__  (factor) ever smoked a cigarette, cigar, or pipe __(waves 2, 5)__:
-  - "never_smoked"
-  - "smoked"
+-   **s_ecig** (factor) e-cigarette user **(waves 7-12)**;
 
-- __s_smk_age_start__  (numeric) age started smoking regularly __(waves 2, 5)__:
-  
-- __s_othersmoker_hhold__  (factor) are there other smokers in the household? __(waves 2, 5-12)__:
-  - "no"
-  - "yes"
-  
-- __s_ecig__ (factor) e-cigarette user __(waves 7-12)__;
-  - "never_used_ecig" - has never tried an e-cigarette.
-  - "not_currently_using_ecig" - has used or tried e-cigarettes in the past but not a current user.
-  - "infrequent_ecig_use" - uses e-cigarettes but less than once a week.
-  - "frequent_ecig_use" - uses e-cigarettes at least once a week. 
-  
-- __s_ecig_current__ (factor) e-cigarette user __(waves 7-12)__;
-  - "non_ecig_user" - not a current user of e-cigarettes.
-  - "ecig_user" - currently uses e-cigarettes (including infrequent use as defined in __s_ecig__).
+    -   "never_used_ecig" - has never tried an e-cigarette.
+    -   "not_currently_using_ecig" - has used or tried e-cigarettes in the past but not a current user.
+    -   "infrequent_ecig_use" - uses e-cigarettes but less than once a week.
+    -   "frequent_ecig_use" - uses e-cigarettes at least once a week.
 
+-   **s_ecig_current** (factor) e-cigarette user **(waves 7-12)**;
+
+    -   "non_ecig_user" - not a current user of e-cigarettes.
+    -   "ecig_user" - currently uses e-cigarettes (including infrequent use as defined in **s_ecig**).
